@@ -1,0 +1,15 @@
+version: '3.5'
+services: 
+    server:
+        build: ../application/fastapi
+        container_name: "fastapi"
+        volumes:
+            - type: bind
+              source: ./fastapi
+              target: /fastapi
+              read_only: true
+        ports:
+            - "8080:8080"
+
+
+#docker-compose -f fastapi.yml up
