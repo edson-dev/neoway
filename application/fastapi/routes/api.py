@@ -40,6 +40,18 @@ def init_app(app, access_point="/api", encoding='utf-8'):
                     table_repository = db.create_table(file_name,
                                                        primary_id='id',
                                                        primary_type=db.types.integer)
+                    table_repository.create_column('cpf', db.types.string(20)) #unique=True, nullable=False)
+                    table_repository.create_column('private', db.types.integer)
+                    table_repository.create_column('incomplete', db.types.integer)
+                    table_repository.create_column('date_last_buy', db.types.string(10))
+                    table_repository.create_column('ticket_avg', db.types.string(8))
+                    table_repository.create_column('ticket_last_buy', db.types.string(8))
+                    table_repository.create_column('store_frequent', db.types.string)
+                    table_repository.create_column('store_last', db.types.string)
+                    table_repository.create_column('cpf_valid', db.types.boolean)
+                    table_repository.create_column('cnpj_valid_store_frequent', db.types.boolean)
+                    table_repository.create_column('store_last', db.types.boolean)
+
                     db.commit()
                 else:
                     table_repository = db[file_name]
