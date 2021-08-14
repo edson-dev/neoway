@@ -17,7 +17,7 @@ def init_app(app, access_point="/api", encoding='utf-8'):
         lines = file.file.readlines()
         file_name = file.filename.split(".")[0]
         result, table_repository = await lines_to_object_list(file_name, lines)
-        r = {"success": True}
+        return_mensage = {"success": True}
         try:
             table_repository.insert_many([ob.__dict__ for ob in result])
         except Exception as e:
@@ -26,7 +26,7 @@ def init_app(app, access_point="/api", encoding='utf-8'):
                  "error": str(e),
                 "type": "Conflict"
             })
-        return r
+        return return_mensage
         #return result
 
     async def lines_to_object_list(file_name, lines):
