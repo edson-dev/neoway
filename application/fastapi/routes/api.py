@@ -1,19 +1,19 @@
-from fastapi import UploadFile, File
+from fastapi import UploadFile, File, Request, HTTPException
 import dataset
 
 from application.fastapi.classes.table import Table
 from application.fastapi.classes.row import Row
 
+db = dataset.connect("postgresql://postgres:123456@localhost:5432")
+
 def init_app(app, access_point="/api", encoding='utf-8'):
-    @app.get(access_point, tags=[access_point])
-    async def get():
-        """all elements on a table"""
-        return "test"
+    @app.get(access_point+"/{table}", tags=[access_point])
+    async def get(table, request: Request):
+        return list(db[table].all()) if db[table] else {"error":"database not created"}
 
     @app.post(access_point+"/upload_file", tags=[access_point])
     async def post_file(file: UploadFile = File(...)):
         """all elements on a table"""
-        db = dataset.connect("postgresql://postgres:123456@localhost:5432")
         lines = file.file.readlines()
         file_name = file.filename.split(".")[0]
         counter = 0
@@ -37,9 +37,11 @@ def init_app(app, access_point="/api", encoding='utf-8'):
         try:
             table_repository.insert_many([ob.__dict__ for ob in result])
         except Exception as e:
-            r = {"success": False,
-                 "error": str(e)}
-
+            raise HTTPException(status_code=409, detail={
+                "success": False,
+                 "error": str(e),
+                "type": "Conflict"
+            })
         return r
         #return result
 
