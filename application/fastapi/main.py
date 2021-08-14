@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from routes import doc, api
 
 import os
@@ -12,6 +13,8 @@ app = FastAPI(
     version=f"teste version",
     static_directory="static"
 )
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 doc.init_app(app)
 api.init_app(app, "/api")
 
