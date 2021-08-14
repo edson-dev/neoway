@@ -8,18 +8,19 @@ import os
 
 # configure static and templates file on jinja 2
 app = FastAPI(
-    title=f"teste title",
-    description=f"teste description",
-    version=f"teste version",
+    title=f"Technical Case",
+    description=f"endpoint para subir planilhas para banco em dados relacional Postgres.",
+    version=f"0.0.1",
     static_directory="static"
 )
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+#import factory builders and initiate
 doc.init_app(app)
 api.init_app(app, "/api")
 
 @app.get("/", tags=["/view"])
-async def root():
+async def index():
     return {"message": "Hello World"}
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ db = dataset.connect("postgresql://postgres:123456@localhost:5432")
 
 def init_app(app, access_point="/api", encoding='utf-8'):
     @app.get(access_point+"/{table}", tags=[access_point])
-    async def get(table, request: Request):
+    async def get_table_itens(table, request: Request):
         return list(db[table].all()) if db[table] else {"error":"database not created"}
 
     @app.post(access_point+"/upload_file", tags=[access_point])
