@@ -70,12 +70,15 @@ def init_app(app, access_point="/api"):
                     database_table = db.create_table(file_name,
                                             primary_id='id',
                                             primary_type=db.types.integer)
-                    database_table.create_column('cpf', db.types.string)
                     db.commit()
+                else:
+                    database_table = db[file_name]
             else:
                 item = Row(c, i.decode(encoding).split(), table.fields)
+                #database_table.insert(item.__dict__)
                 result.append(item)
             c += 1
+        database_table.insert_many([ob.__dict__ for ob in result])
 
         return {"success":True}
         #return result
