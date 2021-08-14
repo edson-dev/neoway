@@ -10,14 +10,12 @@ app = FastAPI(
     title=f"teste title",
     description=f"teste description",
     version=f"teste version",
-    static_directory="static",
-    docs_url=None,
-    redoc_url=None
+    static_directory="static"
 )
 doc.init_app(app)
 api.init_app(app, "/api")
 
-@app.get("/")
+@app.get("/", tags=["/view"])
 async def root():
     return {"message": "Hello World"}
 
