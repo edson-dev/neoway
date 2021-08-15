@@ -1,10 +1,8 @@
 from typing import Optional
-
 from fastapi import UploadFile, File, Request, HTTPException
 import dataset
 
-from application.fastapi.classes.table import Table
-from application.fastapi.classes.row import Row
+
 
 #define the database connection o start
 db = dataset.connect("postgresql://postgres:123456@localhost:5432")
@@ -18,6 +16,8 @@ def init_app(app, access_point="/api", encoding='utf-8'):
     @app.post(access_point+"/upload_file", tags=[access_point])
     async def post_file(file: UploadFile = File(...)):
         """all lines in the file"""
+        if file.filename == "":
+            return {"error": "empty file"}
         lines = file.file.readlines()
         #use filename w/o extesion for database name
         file_name = file.filename.split(".")[0]

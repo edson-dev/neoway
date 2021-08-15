@@ -9,7 +9,7 @@ services:
               target: /fastapi
               read_only: true
         ports:
-            - "8080:8080"
+            - 8080:8080
 
 
 #docker-compose -f fastapi.yml up

@@ -11,7 +11,7 @@ class Row():
             self.set_value(label, item)
             self.validador(label)
 
-    """if a attribute need a validation its trigger by the label name"""
+    """if a attribute need a validator its trigger by the label name"""
     def validador(self, label):
         if label in ["cpf"]:
             self.cpf_valid = cpf.validate(cpf.sieve(self.cpf))
@@ -22,6 +22,7 @@ class Row():
 
     """set attribute value buy string name"""
     def set_value(self, label, item):
+        #data conversion and sanitization if it was needed to insert data in database
         value = unidecode(item).lower()
         setattr(self, label, value)
 
