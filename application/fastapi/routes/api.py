@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import UploadFile, File, Request, HTTPException
 import dataset
 
@@ -11,11 +13,6 @@ db = dataset.connect("postgresql://postgres:123456@localhost:5432")
 #it split responsibility and use in that module only libs and services that it needs
 def init_app(app, access_point="/api", encoding='utf-8'):
 
-    #simple route that return all the itens on database as a json format
-    ##todo optimize time with search restriction and cache usage since it's not change data
-    @app.get(access_point+"/{table}", tags=[access_point])
-    async def get_table_itens(table, request: Request):
-        return list(db[table].all()) if db[table] else {"error": "database not created"}
 
     #endpoint that recive the file upload
     @app.post(access_point+"/upload_file", tags=[access_point])
@@ -36,6 +33,12 @@ def init_app(app, access_point="/api", encoding='utf-8'):
                 "type": "Conflict"
             })
         return return_mensage
+
+    # simple route that return all the itens on database as a json format
+    ##todo optimize time with search restriction and cache usage since it's not change data
+    @app.get(access_point + "/table/{table}", tags=[access_point])
+    async def get_table_itens(table, request: Request):
+        return list(db[table].all()) if db[table] else {"error": "database not created"}
 
     #transforma each line in a Row object
     async def lines_to_object_list(file_name, lines):
