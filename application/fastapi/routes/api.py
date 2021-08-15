@@ -4,20 +4,29 @@ import dataset
 from application.fastapi.classes.table import Table
 from application.fastapi.classes.row import Row
 
+#define the database connection o start
 db = dataset.connect("postgresql://postgres:123456@localhost:5432")
 
+#innit app is a factory pattern that avoid ciclyc importation of the app
+#it split responsibility and use in that module only libs and services that it needs
 def init_app(app, access_point="/api", encoding='utf-8'):
+
+    #simple route that return all the itens on database as a json format
+    ##todo optimize time with search restriction and cache usage since it's not change data
     @app.get(access_point+"/{table}", tags=[access_point])
     async def get_table_itens(table, request: Request):
-        return list(db[table].all()) if db[table] else {"error":"database not created"}
+        return list(db[table].all()) if db[table] else {"error": "database not created"}
 
+    #endpoint that recive the file upload
     @app.post(access_point+"/upload_file", tags=[access_point])
     async def post_file(file: UploadFile = File(...)):
-        """all elements on a table"""
+        """all lines in the file"""
         lines = file.file.readlines()
+        #use filename w/o extesion for database name
         file_name = file.filename.split(".")[0]
         result, table_repository = await lines_to_object_list(file_name, lines)
         return_mensage = {"success": True}
+        #presist objects to database as a single insert many and in dictionary format
         try:
             table_repository.insert_many([ob.__dict__ for ob in result])
         except Exception as e:
@@ -27,9 +36,10 @@ def init_app(app, access_point="/api", encoding='utf-8'):
                 "type": "Conflict"
             })
         return return_mensage
-        #return result
 
+    #transforma each line in a Row object
     async def lines_to_object_list(file_name, lines):
+        #reset database connection to avoid change data before rea data
         db = dataset.connect("postgresql://postgres:123456@localhost:5432")
         counter = 0
         result = []
@@ -37,26 +47,13 @@ def init_app(app, access_point="/api", encoding='utf-8'):
             if counter == 0:
                 table = Table(i.decode(encoding).split())
                 if not db[file_name]:
-                    table_repository = db.create_table(file_name,
-                                                       primary_id='id',
-                                                       primary_type=db.types.integer)
-                    table_repository.create_column('cpf', db.types.string(20)) #unique=True, nullable=False)
-                    table_repository.create_column('private', db.types.integer)
-                    table_repository.create_column('incomplete', db.types.integer)
-                    table_repository.create_column('date_last_buy', db.types.string(10))
-                    table_repository.create_column('ticket_avg', db.types.string(8))
-                    table_repository.create_column('ticket_last_buy', db.types.string(8))
-                    table_repository.create_column('store_frequent', db.types.string)
-                    table_repository.create_column('store_last', db.types.string)
-                    table_repository.create_column('cpf_valid', db.types.boolean)
-                    table_repository.create_column('cnpj_valid_store_frequent', db.types.boolean)
-                    table_repository.create_column('store_last', db.types.boolean)
-
+                    table_repository = table.table_definition(file_name, db)
                     db.commit()
                 else:
                     table_repository = db[file_name]
             else:
                 item = Row(counter, i.decode(encoding).split(), table.fields)
+                # can try use insert one by one but time is a issue that way
                 # table_repository.insert(item.__dict__)
                 result.append(item)
             counter += 1

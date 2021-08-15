@@ -9,7 +9,7 @@ import os
 # configure static and templates file on jinja 2
 app = FastAPI(
     title=f"Technical Case",
-    description=f"endpoint para subir planilhas para banco em dados relacional Postgres.",
+    description=f"endpoint para subir planilhas para banco de dados relacional Postgres.",
     version=f"0.0.1",
     static_directory="static"
 )
@@ -19,6 +19,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 doc.init_app(app)
 api.init_app(app, "/api")
 
+#views
 @app.get("/", tags=["/view"])
 async def index():
     return {"message": "Hello World"}

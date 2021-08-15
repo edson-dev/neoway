@@ -8,24 +8,14 @@ from brutils import cpf, cnpj
 app = Flask(__name__)
 encoding = 'utf-8'
 
+"""Represent each row in the table"""
 class Row():
     def __init__(self, id, string, table):
+        #initialize attributes using ones of the table
         self.id = id
         for label, item in zip(table, string):
             self.set_value(label, item)
             self.validador(label)
-        # self.id = id
-        # document = CPF(string[0])
-        # self.cpf = document.value
-        # self.cpf_valid = document.valid
-        # self.private = string[1]
-        # self.incomplete = string[2]
-        # self.last_buy_date = string[3]
-        # self.ticket = string[4]
-        # self.ticket_last_buy = string[5]
-        # self.shop = string[6]
-        # self.shop_last = string[7]
-        # print(f"Row:{self.__dict__}")
 
     def validador(self, label):
         if label in ["cpf"]:

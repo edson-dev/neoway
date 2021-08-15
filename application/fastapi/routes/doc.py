@@ -5,6 +5,7 @@ from fastapi.openapi.docs import (
 )
 
 
+#change some attributes on the swagger ui like titles, description and icon
 def init_app(app, docs="/docs", redocs="/redocs", icon="/static/images/perfil.png"):
     @app.get(docs, include_in_schema=False)
     async def custom_swagger_ui_html():
