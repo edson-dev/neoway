@@ -5,3 +5,11 @@ python-multipart
 Jinja2
 unidecode
 brutils
+requests
+anyio
+pytest-asyncio
+pytest-tornasync
+pytest-trio
+pytest-twisted
+twisted
+nest_asyncio
