@@ -7,7 +7,7 @@ from classes.table import Table
 
 # define the database connection o start
 # use "localhost" or "postgres" when building docker
-env = "postgres"
+env = "localhost"
 db = dataset.connect(f"postgresql://postgres:123456@{env}:5432")
 
 
