@@ -3,6 +3,7 @@ services:
     server:
         build: ../application/fastapi
         container_name: "fastapi"
+        #todo fix 2way bind folder
         volumes:
             - type: bind
               source: ./fastapi

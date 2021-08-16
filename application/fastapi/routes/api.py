@@ -2,11 +2,14 @@ from typing import Optional
 from fastapi import UploadFile, File, Request, HTTPException
 import dataset
 
-#define the database connection o start
-env = "localhost"
-db = dataset.connect(f"postgresql://postgres:123456@{env}:5432")
 from classes.row import Row
 from classes.table import Table
+
+#define the database connection o start
+# use "localhost" or "postgres" when building docker
+env = "localhost"
+db = dataset.connect(f"postgresql://postgres:123456@{env}:5432")
+
 
 #innit app is a factory pattern that avoid ciclyc importation of the app
 #it split responsibility and use in that module only libs and services that it needs
