@@ -3,3 +3,5 @@ dataset
 psycopg2-binary
 python-multipart
 Jinja2
+unidecode
+brutils

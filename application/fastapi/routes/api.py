@@ -2,10 +2,11 @@ from typing import Optional
 from fastapi import UploadFile, File, Request, HTTPException
 import dataset
 
-
-
 #define the database connection o start
-db = dataset.connect("postgresql://postgres:123456@localhost:5432")
+env = "localhost"
+db = dataset.connect(f"postgresql://postgres:123456@{env}:5432")
+from classes.row import Row
+from classes.table import Table
 
 #innit app is a factory pattern that avoid ciclyc importation of the app
 #it split responsibility and use in that module only libs and services that it needs
@@ -22,7 +23,7 @@ def init_app(app, access_point="/api", encoding='utf-8'):
         #use filename w/o extesion for database name
         file_name = file.filename.split(".")[0]
         result, table_repository = await lines_to_object_list(file_name, lines)
-        return_mensage = {"success": True}
+        return_message = {"success": True}
         #presist objects to database as a single insert many and in dictionary format
         try:
             table_repository.insert_many([ob.__dict__ for ob in result])
@@ -32,7 +33,7 @@ def init_app(app, access_point="/api", encoding='utf-8'):
                  "error": str(e),
                 "type": "Conflict"
             })
-        return return_mensage
+        return return_message
 
     # simple route that return all the itens on database as a json format
     ##todo optimize time with search restriction and cache usage since it's not change data
@@ -43,7 +44,7 @@ def init_app(app, access_point="/api", encoding='utf-8'):
     #transforma each line in a Row object
     async def lines_to_object_list(file_name, lines):
         #reset database connection to avoid change data before rea data
-        db = dataset.connect("postgresql://postgres:123456@localhost:5432")
+        db = dataset.connect(f"postgresql://postgres:123456@{env}:5432")
         counter = 0
         result = []
         for i in lines:
